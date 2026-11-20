@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Samboly Yvan — Développeur Frontend</title>
+  <meta name="description" content="Samboly Yvan, développeur frontend passionné par la création d'interfaces web modernes, fluides et intuitives." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: oklch(0.972 0.009 85);
+      --ink: oklch(0.19 0.018 260);
+      --muted: oklch(0.47 0.015 260);
+      --border: oklch(0.87 0.014 85);
+      --card: oklch(0.99 0.005 85);
+      --signal: oklch(0.66 0.205 38);
+      --signal-ink: oklch(0.985 0.005 85);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --display: "Syne", system-ui, sans-serif;
+      --sans: "Manrope", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    ::selection { background: var(--signal); color: var(--signal-ink); }
+
+    .hero { position: relative; isolation: isolate; min-height: 100svh; display: flex; flex-direction: column; padding: 20px; } 
+    .grid, .glow { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+    .grid {
+      background-image: linear-gradient(color-mix(in oklab, var(--ink) 6%, transparent) 1px, transparent 1px),
+                        linear-gradient(90deg, color-mix(in oklab, var(--ink) 6%, transparent) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, black 30%, transparent 85%);
+    }
+    .glow { background: radial-gradient(420px circle at var(--mx, 70%) var(--my, 30%), color-mix(in oklab, var(--signal) 22%, transparent), transparent 70%); }
+
+    .top { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-family: var(--display); font-weight: 800; font-size: 1.125rem; }
+    .accent { color: var(--signal); }
+    .badge { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in oklab, var(--card) 70%, transparent); font: 11px var(--mono); color: var(--muted); backdrop-filter: blur(6px); }
+    .dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
+    .dot::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--signal); animation: ring 2s var(--ease) infinite; }
+
+    .content { flex: 1; width: 100%; max-width: 72rem; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; padding: 24px 0; }
+    .eyebrow { font: 12px var(--mono); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    h1 { font-family: var(--display); font-weight: 800; line-height: 0.92; letter-spacing: -0.04em; font-size: clamp(2.5rem, 7vw, 5.5rem); }
+    .cols { display: grid; gap: 24px; margin-top: 24px; }
+    .subtitle { font-family: var(--display); font-weight: 600; font-size: 1.25rem; line-height: 1.35; letter-spacing: -0.01em; }
+    .desc { font-size: 0.875rem; line-height: 1.65; color: var(--muted); margin-bottom: 24px; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; }
+    .cta { display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 28px; border: 0; border-radius: 999px; background: var(--signal); color: var(--signal-ink); font: 700 1rem var(--sans); cursor: pointer; text-decoration: none;
+      box-shadow: 0 18px 40px -16px color-mix(in oklab, var(--signal) 70%, transparent); transition: transform .4s var(--ease), box-shadow .4s var(--ease); }
+    .cta:hover { transform: translateY(-3px); box-shadow: 0 24px 50px -16px color-mix(in oklab, var(--signal) 85%, transparent); }
+    .cta:active { transform: scale(.98); }
+    .cta:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+    .cta svg { width: 20px; height: 20px; transition: transform .4s var(--ease); }
+    .cta:hover svg { transform: translateX(4px) rotate(-45deg); }
+    .focus { font: 12px var(--mono); color: var(--muted); }
+    .focus-word { display: inline-block; font-weight: 600; color: var(--ink); }
+    .focus-word.swap { animation: wordIn .5s var(--ease); }
+
+    .bottom { display: flex; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: 1px solid var(--border); font: 11px var(--mono); color: var(--muted); }
+    .bottom ul { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+    .copy { display: none; }
+
+    .reveal { opacity: 0; transform: translateY(24px); animation: up .9s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+
+    @keyframes up { to { opacity: 1; transform: none; } }
+    @keyframes wordIn { from { opacity: 0; transform: translateY(60%); } to { opacity: 1; transform: none; } }
+    @keyframes ring { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(2.8); opacity: 0; } }
+
+    @media (min-width: 640px) {
+      .hero { padding: 32px 40px; }
+      .badge, .bottom { font-size: 12px; }
+      .eyebrow { font-size: 14px; margin-bottom: 24px; }
+      .cols { margin-top: 40px; }
+      .subtitle { font-size: 1.5rem; }
+      .desc { font-size: 1rem; }
+      .focus { font-size: 14px; }
+      .copy { display: inline; }
+    }
+    @media (min-width: 768px) {
+      .cols { grid-template-columns: 1.1fr 1fr; align-items: end; gap: 48px; }
+      .subtitle { font-size: 1.875rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .focus-word.swap, .dot::after { animation: none; opacity: 1; transform: none; }
+    }
+    .hero-head { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--signal);
+  box-shadow: 0 12px 30px -10px color-mix(in oklab, var(--signal) 50%, transparent);
+}
+  </style>
+</head>
+<body>
+  <main class="hero" id="hero">
+    <div class="grid" aria-hidden="true"></div>
+    <div class="glow" aria-hidden="true"></div>
+
+    <header class="top reveal" style="--d:0ms">
+      <span class="logo">SY<span class="accent">.</span></span>
+      <span class="badge"><span class="dot"></span>Disponible pour de nouveaux projets</span>
+    </header>
+
+    <section class="content">
+      <p class="eyebrow reveal" style="--d:100ms"><span class="accent">//</span> Développeur Frontend</p>
+      <div class="hero-head reveal" style="--d:200ms">
+  <img class="avatar" src="photo.jpg" alt="Photo de Samboly Yvan" />
+  <h1>SAMBOLY<br /><span class="accent">YVAN</span></h1>
+</div>
+
+      <div class="cols">
+        <p class="subtitle reveal" style="--d:350ms">
+          Développeur Frontend passionné par la création d'interfaces web modernes, fluides et intuitives.
+        </p>
+        <div class="reveal" style="--d:500ms">
+          <p class="desc">
+            Mon objectif : transformer des idées en expériences web claires et performantes.
+            Passionné par le design UI/UX, l'écosystème JavaScript et le développement
+            d'applications rapides, accessibles et soignées dans les moindres détails.
+          </p>
+          <div class="actions">
+            <a class="cta" id="cta" href="https://github.com/KATANA1X" target="_blank" rel="noopener noreferrer">
+              Voir mes projets
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </a>
+            <span class="focus">Focus : <span class="focus-word" id="word">UI/UX</span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bottom reveal" style="--d:650ms">
+      <ul><li>HTML &amp; CSS</li><li>JavaScript</li><li>React</li><li>UI/UX Design</li></ul>
+      <span class="copy">© <span id="year"></span> Samboly Yvan</span>
+    </footer>
+  </main>
+
+  <script>
+    // ⚠️ Mettez ici le lien exact de votre profil GitHub.
+    const GITHUB_URL = "https://github.com/KATANA1X";
+
+    // Année automatique
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Lueur qui suit la souris
+    const hero = document.getElementById("hero");
+    hero.addEventListener("pointermove", (e) => {
+      const r = hero.getBoundingClientRect();
+      hero.style.setProperty("--mx", e.clientX - r.left + "px");
+      hero.style.setProperty("--my", e.clientY - r.top + "px");
+    });
+
+    // Mot qui change
+    const words = ["UI/UX", "JavaScript", "React", "Performance"];
+    const wordEl = document.getElementById("word");
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % words.length;
+      wordEl.classList.remove("swap");
+      void wordEl.offsetWidth;
+      wordEl.textContent = words[i];
+      wordEl.classList.add("swap");
+    }, 2200);
+
+    // Bouton "Voir mes projets" → profil GitHub
+    document.getElementById("cta").href = GITHUB_URL;
+  </script>
+</body>
+</html>
